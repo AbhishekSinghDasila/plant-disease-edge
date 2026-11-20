@@ -1,0 +1,19 @@
+# systemd unit: starts the plant-disease app on boot.
+# Edit User and WorkingDirectory if your user or folder differ, then:
+#   sudo cp pi/plant-app.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now plant-app
+#   journalctl -u plant-app -f      # logs
+[Unit]
+Description=Offline plant-disease detection app
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/plant_disease_edge
+ExecStart=/home/pi/plant_disease_edge/.venv/bin/python app/server.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

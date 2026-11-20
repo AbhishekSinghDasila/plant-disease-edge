@@ -1,0 +1,379 @@
+# Disease knowledge base for the 38 PlantVillage classes (ids = models/pv38.labels.json).
+# General guidance for home growers / students, not a substitute for local extension advice.
+# Chemical options name active ingredients only: always follow the product label and local rules.
+#
+# Fields: name, cause, type (fungal|bacterial|viral|pest|none), severity (low|medium|high|critical),
+#         spread (how fast it moves to other plants), humid (true = wet/humid weather makes it worse),
+#         symptoms, immediate, cultural (organic / cultural), chemical, prevention.
+# "*.healthy" classes all use the _healthy entry.
+
+_healthy:
+  name: Healthy
+  cause: none
+  type: none
+  severity: none
+  spread: none
+  humid: false
+  symptoms: No disease signs on this leaf.
+  immediate: [No treatment needed.]
+  cultural: [Keep checking the plant once or twice a week, especially older and lower leaves.]
+  chemical: []
+  prevention:
+    - Water at the base of the plant, in the morning, so leaves stay dry.
+    - Keep space between plants for airflow, and remove dead leaves.
+
+apple.apple_scab:
+  name: Apple scab
+  cause: Venturia inaequalis (fungus)
+  type: fungal
+  severity: medium
+  spread: high in cool, wet spring weather
+  humid: true
+  symptoms: Olive-green to dark velvety spots on leaves and fruit; leaves may yellow and drop early.
+  immediate:
+    - Remove badly spotted leaves and fruit.
+    - Rake up and destroy fallen leaves (the fungus survives the winter in them).
+  cultural:
+    - Prune the canopy open for airflow and faster drying.
+    - Shred fallen leaves or cover them with compost in autumn.
+  chemical:
+    - Protectant fungicide (captan or mancozeb) from bud break while the weather is wet.
+    - Sulfur for organic growers.
+  prevention: [Plant scab-resistant varieties., Avoid overhead watering.]
+
+apple.black_rot:
+  name: Apple black rot
+  cause: Botryosphaeria obtusa (fungus)
+  type: fungal
+  severity: medium
+  spread: medium
+  humid: true
+  symptoms: '"Frog-eye" leaf spots (purple edge, tan centre), sunken branch cankers, rotting mummified fruit.'
+  immediate:
+    - Cut out cankers and dead wood 15 cm below the visible damage.
+    - Remove mummified fruit from the tree and the ground.
+  cultural: [Burn or bin the pruned wood., Disinfect pruning tools between cuts.]
+  chemical: [Captan or a strobilurin fungicide from petal fall in wet seasons.]
+  prevention: [Keep trees vigorous (no drought or injury stress)., Remove nearby dead or abandoned apple trees.]
+
+apple.cedar_apple_rust:
+  name: Cedar apple rust
+  cause: Gymnosporangium juniperi-virginianae (fungus, needs juniper/cedar as a second host)
+  type: fungal
+  severity: low
+  spread: medium (spores blow from junipers in spring rain)
+  humid: true
+  symptoms: Bright yellow-orange spots on the leaf top, small tubes on the underside later.
+  immediate: [Remove the worst affected leaves., Look for orange jelly-like galls on nearby junipers and cut them out.]
+  cultural: [Keep junipers away from apple trees if possible.]
+  chemical: [Myclobutanil or sulfur from pink bud to about 3 weeks after petal fall.]
+  prevention: [Plant rust-resistant apple varieties.]
+
+cherry.powdery_mildew:
+  name: Cherry powdery mildew
+  cause: Podosphaera clandestina (fungus)
+  type: fungal
+  severity: low
+  spread: medium (likes warm days, humid nights; does not need rain)
+  humid: true
+  symptoms: White powdery patches on young leaves; leaves curl and twist.
+  immediate: [Prune out heavily infected shoots.]
+  cultural: [Prune for airflow and sun., Avoid too much nitrogen fertiliser (soft new growth is attacked first).]
+  chemical: [Sulfur, potassium bicarbonate, or horticultural oil (not with sulfur within 2 weeks).]
+  prevention: [Remove root suckers and water sprouts.]
+
+corn.gray_leaf_spot:
+  name: Corn gray leaf spot
+  cause: Cercospora zeae-maydis (fungus)
+  type: fungal
+  severity: medium
+  spread: medium (warm, very humid weather, long leaf wetness)
+  humid: true
+  symptoms: Long, narrow, rectangular grey-tan lesions between the leaf veins.
+  immediate: [No cure for infected leaves; check how far up the plant the lesions reach.]
+  cultural: [Rotate away from corn for at least 1 year., Bury or remove crop residue after harvest.]
+  chemical: [Strobilurin or triazole fungicide around tasseling if lesions reach the upper leaves.]
+  prevention: [Grow resistant hybrids., Avoid dense planting in humid fields.]
+
+corn.common_rust:
+  name: Corn common rust
+  cause: Puccinia sorghi (fungus)
+  type: fungal
+  severity: low
+  spread: high (wind-blown spores), but usually little yield loss
+  humid: true
+  symptoms: Small cinnamon-brown powdery pustules on both leaf surfaces.
+  immediate: [Usually no action; monitor whether pustules cover the upper leaves before tasseling.]
+  cultural: [Plant resistant hybrids.]
+  chemical: [Triazole or strobilurin fungicide only if severe on young plants or sweet corn.]
+  prevention: [Early planting avoids the worst spore load in many regions.]
+
+corn.northern_leaf_blight:
+  name: Northern corn leaf blight
+  cause: Exserohilum turcicum (fungus)
+  type: fungal
+  severity: medium
+  spread: medium (moderate temperatures with heavy dew)
+  humid: true
+  symptoms: Long cigar-shaped grey-green to tan lesions (3-15 cm).
+  immediate: [Check upper leaves; early infection before tasseling causes the biggest losses.]
+  cultural: [Rotate crops., Manage residue (tillage or removal).]
+  chemical: [Fungicide (strobilurin / triazole) at early tasseling if lesions are on the upper third of the plant.]
+  prevention: [Resistant hybrids.]
+
+grape.black_rot:
+  name: Grape black rot
+  cause: Guignardia bidwellii (fungus)
+  type: fungal
+  severity: high
+  spread: high in warm, wet weather
+  humid: true
+  symptoms: Brown leaf spots with black dots; berries shrivel into hard black "mummies".
+  immediate: [Remove infected leaves and berries now., Remove all mummies from the vine and the ground.]
+  cultural: [Open the canopy (leaf removal, shoot positioning) so it dries fast., Prune out infected canes in winter.]
+  chemical: [Mancozeb, captan or myclobutanil from early shoot growth until berries are about 4 weeks past bloom.]
+  prevention: [Good sanitation every winter is the most important step.]
+
+grape.esca:
+  name: Grape esca (black measles)
+  cause: Trunk-wood fungi (Phaeomoniella, Phaeoacremonium and others)
+  type: fungal
+  severity: high
+  spread: low (enters through pruning wounds)
+  humid: false
+  symptoms: '"Tiger-stripe" leaves (yellow/red between veins, then brown); dark spots on berries; sudden vine collapse.'
+  immediate: [Mark the vine; there is no cure., Cut out dead wood well below the damage.]
+  cultural: [Prune in dry weather, late in the dormant season., Retrain a new trunk from a healthy shoot if needed.]
+  chemical: [Protect large pruning cuts with a wound sealant or labelled pruning-wound fungicide.]
+  prevention: [Avoid big pruning cuts., Remove and burn dead vines.]
+
+grape.leaf_blight:
+  name: Grape leaf blight (Isariopsis leaf spot)
+  cause: Pseudocercospora vitis (fungus)
+  type: fungal
+  severity: low
+  spread: medium
+  humid: true
+  symptoms: Irregular dark red-brown spots on leaves, later the leaf dries and falls.
+  immediate: [Remove infected leaves.]
+  cultural: [Improve airflow in the canopy., Clear fallen leaves.]
+  chemical: [The same protectant programme as for black rot (mancozeb, copper) controls it.]
+  prevention: [Avoid wetting the leaves when watering.]
+
+orange.citrus_greening:
+  name: Citrus greening (Huanglongbing, HLB)
+  cause: Candidatus Liberibacter (bacterium), spread by the Asian citrus psyllid
+  type: bacterial
+  severity: critical
+  spread: high (insect vector), no cure
+  humid: false
+  symptoms: Blotchy, uneven yellow mottling not matching on both leaf halves; small, lopsided, bitter fruit.
+  immediate:
+    - Report it to the local agriculture / plant-protection office (it is a regulated disease in many countries).
+    - Do not move plants or budwood from this tree.
+  cultural: [Infected trees are usually removed to protect other trees., Check for psyllids (tiny insects on new shoots).]
+  chemical: [Psyllid control (insecticides as advised by local extension); this protects other trees, it does not cure.]
+  prevention: [Buy only certified disease-free nursery plants.]
+
+peach.bacterial_spot:
+  name: Peach bacterial spot
+  cause: Xanthomonas arboricola pv. pruni (bacterium)
+  type: bacterial
+  severity: medium
+  spread: medium (rain splash, wind; worse on sandy soils)
+  humid: true
+  symptoms: Small angular water-soaked spots that turn purple-brown and fall out ("shot holes").
+  immediate: [Remove badly infected twigs., Do not prune or handle wet trees.]
+  cultural: [Avoid overhead irrigation., Keep trees well fed (stressed trees suffer more).]
+  chemical: [Copper sprays at leaf fall and before bud break; oxytetracycline where it is approved.]
+  prevention: [Plant resistant varieties., Use windbreaks.]
+
+pepper.bacterial_spot:
+  name: Pepper bacterial spot
+  cause: Xanthomonas species (bacterium)
+  type: bacterial
+  severity: medium
+  spread: high (rain splash, hands, tools; also in seed)
+  humid: true
+  symptoms: Small water-soaked spots that turn brown with a yellow halo; leaves drop.
+  immediate: [Remove infected leaves and bag them., Do not work with the plants while they are wet.]
+  cultural: [Water at the base, not over the leaves., Rotate away from pepper and tomato for 2-3 years.]
+  chemical: [Copper (alone or with mancozeb) slows the spread; it does not cure infected leaves.]
+  prevention: [Use clean or hot-water-treated seed and resistant varieties., Disinfect stakes and tools.]
+
+potato.early_blight:
+  name: Potato early blight
+  cause: Alternaria solani (fungus)
+  type: fungal
+  severity: medium
+  spread: medium (warm weather with alternating wet and dry periods)
+  humid: true
+  symptoms: Brown spots with concentric "target" rings, starting on older lower leaves.
+  immediate: [Remove the lower infected leaves.]
+  cultural: [Keep plants well fed and watered (stressed plants get it worse)., Mulch to stop soil splash.]
+  chemical: [Chlorothalonil, mancozeb or copper; start when the first spots appear.]
+  prevention: [Rotate crops for 2-3 years., Remove volunteer potatoes and plant debris.]
+
+potato.late_blight:
+  name: Potato late blight
+  cause: Phytophthora infestans (water mould)
+  type: fungal
+  severity: critical
+  spread: very high (can destroy a field within a week in cool, wet weather)
+  humid: true
+  symptoms: Large dark water-soaked patches, white fuzzy growth on the leaf underside in humid weather.
+  immediate:
+    - Act today, remove and bag infected plants (do not compost them).
+    - Warn neighbours who grow potatoes or tomatoes.
+  cultural: [Keep foliage dry., Kill the haulm 2-3 weeks before harvest so tubers are not infected.]
+  chemical: [Protectant fungicide (mancozeb, chlorothalonil, copper) on healthy plants nearby; systemic products as advised locally.]
+  prevention: [Plant certified seed tubers and resistant varieties., Destroy cull piles and volunteer potatoes.]
+
+squash.powdery_mildew:
+  name: Squash powdery mildew
+  cause: Podosphaera xanthii / Erysiphe cichoracearum (fungus)
+  type: fungal
+  severity: low
+  spread: high (wind-blown spores; does not need wet leaves)
+  humid: true
+  symptoms: White powdery spots on leaves and stems that spread over the whole leaf.
+  immediate: [Remove the worst leaves.]
+  cultural: [Space plants for airflow and full sun., Water at the base.]
+  chemical: [Sulfur, potassium bicarbonate, neem oil, or a diluted milk spray (1:9) for small gardens.]
+  prevention: [Plant resistant varieties.]
+
+strawberry.leaf_scorch:
+  name: Strawberry leaf scorch
+  cause: Diplocarpon earlianum (fungus)
+  type: fungal
+  severity: medium
+  spread: medium (rain splash)
+  humid: true
+  symptoms: Many small dark purple spots; leaves look scorched and dry up.
+  immediate: [Remove infected leaves.]
+  cultural: [Avoid overhead watering., Renovate the bed after harvest (mow old leaves, thin plants)., Renew plantings every 3-4 years.]
+  chemical: [Captan or myclobutanil when the disease is severe.]
+  prevention: [Plant resistant varieties in a sunny, well-drained spot.]
+
+tomato.bacterial_spot:
+  name: Tomato bacterial spot
+  cause: Xanthomonas species (bacterium)
+  type: bacterial
+  severity: medium
+  spread: high (rain splash, hands, tools; also in seed)
+  humid: true
+  symptoms: Small dark greasy spots, sometimes with a yellow halo; spots on fruit are raised and scabby.
+  immediate: [Remove spotted leaves and bag them., Do not handle plants while wet.]
+  cultural: [Water at the base., Rotate away from tomato and pepper for 2-3 years.]
+  chemical: [Copper (alone or with mancozeb) slows the spread.]
+  prevention: [Clean seed and transplants., Disinfect stakes, cages and tools.]
+
+tomato.early_blight:
+  name: Tomato early blight
+  cause: Alternaria solani / A. linariae (fungus)
+  type: fungal
+  severity: medium
+  spread: medium (warm, humid weather; splashes up from the soil)
+  humid: true
+  symptoms: Brown spots with concentric "target" rings and a yellow halo, on older lower leaves first.
+  immediate: [Remove lower infected leaves up to 30 cm above the soil.]
+  cultural: [Mulch the soil to stop splash., Stake and prune for airflow., Water at the base in the morning.]
+  chemical: [Chlorothalonil, mancozeb or copper every 7-10 days in wet weather.]
+  prevention: [Rotate crops for 2-3 years., Remove plant debris at the end of the season.]
+
+tomato.late_blight:
+  name: Tomato late blight
+  cause: Phytophthora infestans (water mould)
+  type: fungal
+  severity: critical
+  spread: very high (cool, wet weather; can kill plants in days)
+  humid: true
+  symptoms: Large greasy grey-green to brown patches, white fuzzy growth on the underside, brown firm fruit rot.
+  immediate:
+    - Act today, remove and bag infected plants (do not compost them).
+    - Check all tomato and potato plants nearby.
+  cultural: [Keep foliage dry., Increase spacing and ventilation (greenhouse).]
+  chemical: [Protectant fungicide (chlorothalonil, mancozeb, copper) on healthy plants nearby.]
+  prevention: [Grow resistant varieties., Do not plant near potatoes; remove volunteer potatoes.]
+
+tomato.leaf_mold:
+  name: Tomato leaf mould
+  cause: Passalora fulva (fungus)
+  type: fungal
+  severity: medium
+  spread: medium (high humidity above 85 %, mainly in greenhouses)
+  humid: true
+  symptoms: Pale yellow spots on the leaf top, olive-green velvety mould underneath.
+  immediate: [Remove infected leaves., Ventilate to bring humidity below 85 %.]
+  cultural: [Space and prune plants for airflow., Water in the morning, at the base.]
+  chemical: [Chlorothalonil, mancozeb or copper if humidity cannot be controlled.]
+  prevention: [Resistant varieties., Clean the greenhouse between seasons.]
+
+tomato.septoria_leaf_spot:
+  name: Tomato Septoria leaf spot
+  cause: Septoria lycopersici (fungus)
+  type: fungal
+  severity: medium
+  spread: high (rain splash, wet weather)
+  humid: true
+  symptoms: Many small round spots with a dark edge and grey centre with tiny black dots; lower leaves first.
+  immediate: [Remove infected lower leaves.]
+  cultural: [Mulch, stake plants, water at the base., Do not work with wet plants.]
+  chemical: [Chlorothalonil, mancozeb or copper.]
+  prevention: [Rotate crops for at least 1 year., Remove debris and nearby nightshade weeds.]
+
+tomato.spider_mites:
+  name: Two-spotted spider mite
+  cause: Tetranychus urticae (mite, a pest)
+  type: pest
+  severity: medium
+  spread: high in hot, dry, dusty conditions
+  humid: false
+  symptoms: Fine yellow speckling, bronze leaves, fine webbing on the leaf underside.
+  immediate: [Spray leaf undersides with a strong jet of water., Remove the worst leaves.]
+  cultural: [Keep plants well watered (drought-stressed plants suffer more)., Raise humidity in a greenhouse.]
+  chemical: [Insecticidal soap, neem or horticultural oil (cover the leaf undersides); a labelled miticide if severe.]
+  prevention: [Avoid broad-spectrum insecticides that kill predatory mites., Release predatory mites (Phytoseiulus) in greenhouses.]
+
+tomato.target_spot:
+  name: Tomato target spot
+  cause: Corynespora cassiicola (fungus)
+  type: fungal
+  severity: medium
+  spread: medium (warm, humid weather)
+  humid: true
+  symptoms: Brown spots with light concentric rings, can merge into large dead areas; also on fruit.
+  immediate: [Remove infected leaves.]
+  cultural: [Prune lower leaves and improve airflow., Avoid overhead irrigation.]
+  chemical: [Chlorothalonil, mancozeb or a strobilurin fungicide.]
+  prevention: [Rotate crops., Remove crop debris.]
+
+tomato.yellow_leaf_curl_virus:
+  name: Tomato yellow leaf curl virus (TYLCV)
+  cause: Begomovirus, spread by whiteflies
+  type: viral
+  severity: high
+  spread: high (whiteflies)
+  humid: false
+  symptoms: Small upward-curled leaves with yellow edges, stunted plant, flowers drop.
+  immediate:
+    - Remove and bag infected plants (no cure).
+    - Check leaf undersides for whiteflies on the other plants.
+  cultural: [Use insect-proof netting or yellow sticky traps., Remove weeds that host whiteflies.]
+  chemical: [Whitefly control (insecticidal soap, neem, or labelled insecticides); this stops spread, not the virus.]
+  prevention: [Plant resistant (TY) varieties., Use virus-free transplants.]
+
+tomato.mosaic_virus:
+  name: Tomato mosaic virus (ToMV)
+  cause: Tobamovirus, spread by hands, tools and seed
+  type: viral
+  severity: high
+  spread: high by contact (very stable virus)
+  humid: false
+  symptoms: Light and dark green mosaic pattern, distorted fern-like leaves, stunted plants.
+  immediate:
+    - Remove infected plants (no cure).
+    - Wash hands and disinfect tools (10 % bleach or skim milk dip) before touching other plants.
+  cultural: [Do not smoke or handle tobacco near the plants., Handle healthy plants first, suspected ones last.]
+  chemical: [No chemical cure.]
+  prevention: [Resistant varieties., Clean seed.]

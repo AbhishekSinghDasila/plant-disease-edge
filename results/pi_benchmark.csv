@@ -1,0 +1,2 @@
+device,model,size_mb,input_dtype,threads,latency_mean_ms,latency_p95_ms,fps,peak_ram_mb
+raspberrypi aarch64,pv38_int8.tflite,2.757,uint8,4,166.99,214.07,6.0,36.0

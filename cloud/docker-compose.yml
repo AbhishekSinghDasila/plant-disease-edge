@@ -1,0 +1,104 @@
+# Cloud side of the smart-farm system (runs on the laptop).
+#   cd cloud && docker-compose up -d --build      # start / update
+#   docker-compose ps ; docker-compose logs -f gateway
+#   dashboard: http://localhost:8080
+# Written for docker-compose v1.29 (file format 3.8).
+version: "3.8"
+
+x-service: &service
+  build: &build
+    context: .
+    dockerfile: Dockerfile
+  restart: unless-stopped
+  environment: &env
+    MQTT_HOST: mosquitto
+    DATABASE_URL: postgresql://plant:plant@postgres:5432/plant
+  depends_on: [mosquitto, postgres]
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports: ["1883:1883"]
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mqttdata:/mosquitto/data
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: plant
+      POSTGRES_PASSWORD: plant
+      POSTGRES_DB: plant
+    ports: ["127.0.0.1:5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U plant"]
+      interval: 5s
+      retries: 10
+
+  ingest:
+    <<: *service
+    build: {<<: *build, args: {SERVICE: ingest}}
+    image: plantfarm/ingest
+    environment: {<<: *env, SERVICE_NAME: ingest}
+
+  gateway:
+    <<: *service
+    build: {<<: *build, args: {SERVICE: gateway}}
+    image: plantfarm/gateway
+    environment: {<<: *env, SERVICE_NAME: gateway, PI_URL: "http://10.93.8.209:8000"}   # Pi app, for the live preview
+    ports: ["8080:8080"]
+    volumes: [images:/data/images]
+
+  soil-sim:                 # remove / ENABLED=0 when the real NodeMCU soil probe is connected
+    <<: *service
+    build: {<<: *build, args: {SERVICE: soil_sim}}
+    image: plantfarm/soil-sim
+    environment: {<<: *env, SERVICE_NAME: soil-sim, SIM_SPEED: "60", INTERVAL_S: "30", AUTO_WATER_BELOW: "15"}
+
+  irrigation:
+    <<: *service
+    build: {<<: *build, args: {SERVICE: irrigation}}
+    image: plantfarm/irrigation
+    environment: {<<: *env, SERVICE_NAME: irrigation, CROP: auto}
+
+  advisor:                  # Phase 4: diagnosis -> verdict + measures (plant/advice)
+    <<: *service
+    build: {<<: *build, args: {SERVICE: advisor}}
+    image: plantfarm/advisor
+    environment: {<<: *env, SERVICE_NAME: advisor}
+
+  notifier:                 # Phase 4: alerts (plant/alert); Telegram push if TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID are set
+    <<: *service
+    build: {<<: *build, args: {SERVICE: notifier}}
+    image: plantfarm/notifier
+    environment:
+      <<: *env
+      SERVICE_NAME: notifier
+      SENSOR_SILENT_S: "300"
+      TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN:-}"
+      TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID:-}"
+
+  cloud-inference:          # Phase 5: second opinion, FP32 model + 6-view test-time augmentation (plant/cloud_diagnosis)
+    <<: *service
+    build: {<<: *build, args: {SERVICE: cloud_inference}}
+    image: plantfarm/cloud-inference
+    environment:
+      <<: *env
+      SERVICE_NAME: cloud-inference
+      MODEL_PATH: /models/pv38_fp32.tflite      # Phase 5 v2: put the new model in ../models and change this
+      LABELS_PATH: /models/pv38.labels.json
+      THRESHOLD: "0.8"
+      THREADS: "2"
+    volumes:
+      - images:/data/images:ro
+      - ../models:/models:ro
+
+volumes:
+  pgdata:
+  mqttdata:
+  images:

@@ -1,0 +1,63 @@
+# Central settings. Paths are relative to the project folder.
+
+output:
+  models_dir: models
+  results_dir: results
+
+data:
+  raw_dir: data/raw                 # downloaded datasets go here
+  lab_dir: data/lab                 # PlantVillage tomato, split into train/val/test
+  field_dir: data/field             # PlantDoc tomato (+ team photos), split into finetune/test
+  own_photos_dir: data/own_photos   # optional: team photos, one sub-folder per class
+  split: {train: 0.70, val: 0.15, test: 0.15}
+  field_finetune_per_class: 10      # field images per class used for fine-tuning; rest held out
+  seed: 42
+
+train:
+  img_size: 224
+  batch_size: 32
+  epochs_head: 5          # stage 1: frozen backbone, train the classifier head
+  epochs_finetune: 10     # stage 2: unfreeze top of backbone
+  lr_head: 1.0e-3
+  lr_finetune: 1.0e-4
+  unfreeze_fraction: 0.3  # top 30% of backbone layers trainable in stage 2
+  models: [mobilenetv3small, efficientnet_lite0]
+
+field_finetune:
+  epochs: 8
+  lr: 5.0e-5
+  mix_lab_ratio: 3        # lab images mixed in per field image, to avoid forgetting
+
+app:
+  model_path: models/pv38_int8.tflite   # 38 classes / 14 crops (+ models/pv38.labels.json). Tomato-only: models/pretrained_mnv2_int8.tflite
+  confidence_threshold: 0.80   # below this (raised from 0.60 on 2026-11-19: confident wrong answers on unknown photos) -> "not sure, retake the photo"
+  photo_check:                 # before the model: reject blurry / leafless photos (pde/quality.py)
+    enabled: true
+    min_sharpness: 35          # Laplacian variance at 320 px; lab photos p1 = 45, blurry Pi capture = 14
+    min_leaf_fraction: 0.10    # share of leaf-coloured pixels; lab p1 = 0.13, sensor-board photo = 0.06
+  host: 0.0.0.0
+  port: 8000
+
+mqtt:
+  enabled: true
+  broker: localhost       # Mosquitto on the Pi itself (the Pi is the gateway)
+  port: 1883
+  topic_result: plant/diagnosis   # app publishes every prediction here
+  topic_capture: plant/capture    # NodeMCU button publishes here -> Pi takes a photo
+  topic_status: plant/status      # retained online/offline message of the Pi app
+  topic_climate: plant/climate    # retained DHT temperature/humidity from the Pi
+  device_id: pi-node-01
+
+cloud:                    # cloud side = docker-compose stack in cloud/ (on the laptop)
+  enabled: true           # upload each photo + edge result to the gateway (queued in captures/outbox if offline)
+  gateway_url: http://10.93.8.158:8080   # laptop IP (DHCP: recheck with `ip -4 addr` if uploads stop)
+  timeout_s: 10
+  # MQTT reaches the cloud through the Mosquitto bridge: bash pi/install_bridge.sh <laptop-ip>
+
+sensor:
+  dht:
+    enabled: true          # no sensor / no library -> app just runs without it
+    type: DHT11            # or DHT22
+    gpio: 4                # BCM number. DHT11 DATA -> physical pin 7, VCC -> pin 1 (3.3 V), GND -> pin 6
+    interval_s: 5          # seconds between reads (DHT11 needs >= 1 s)
+    publish_every_s: 30    # MQTT plant/climate rate

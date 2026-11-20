@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Farm Cloud</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root { --bg:#f6f7f5; --card:#fff; --ink:#1d2320; --muted:#66706b; --line:#dfe3e0;
+        --ok:#1f8a4c; --bad:#c0392b; --warn:#b7791f; --accent:#2d6a4f; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#121614; --card:#1b201d; --ink:#e7ece9; --muted:#9aa49f; --line:#2c3430;
+          --ok:#4cc38a; --bad:#ef6b5b; --warn:#e2b04a; --accent:#6fcf97; }
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui, sans-serif; }
+header { padding:16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; border-bottom:1px solid var(--line); }
+header h1 { font-size:1.2rem; margin:0; }
+.pill { font-size:.8rem; padding:3px 10px; border-radius:99px; border:1px solid var(--line); color:var(--muted); }
+.pill.on { color:var(--ok); border-color:var(--ok); }
+.pill.off { color:var(--bad); border-color:var(--bad); }
+main { padding:16px; display:grid; gap:14px; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); max-width:1300px; margin:auto; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; min-width:0; }
+.card h2 { font-size:.85rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:0 0 10px; }
+.big { font-size:1.6rem; font-weight:650; }
+.muted { color:var(--muted); font-size:.85rem; }
+.ok { color:var(--ok); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+.badge { display:inline-block; font-size:.75rem; padding:2px 8px; border-radius:99px; border:1px solid var(--warn); color:var(--warn); margin-left:6px; vertical-align:middle; }
+.top3 { list-style:none; padding:0; margin:6px 0 0; font-size:.85rem; }
+.top3 li { display:flex; gap:8px; align-items:center; }
+.top3 .bar { flex:0 0 80px; height:6px; background:var(--line); border-radius:3px; overflow:hidden; }
+.top3 .bar i { display:block; height:100%; background:var(--muted); }
+.top3 li:first-child .bar i { background:var(--warn); }
+.wide { grid-column:1 / -1; }
+.badge.sim { border-color:var(--muted); color:var(--muted); }
+.badge.sev-critical, .badge.sev-high { border-color:var(--bad); color:var(--bad); }
+.flow { display:grid; gap:10px; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); }
+.stage { border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+.stage h3 { margin:0 0 6px; font-size:.95rem; }
+.stage ul { margin:0; padding-left:16px; font-size:.85rem; }
+.stage li { margin:3px 0; }
+.tag { font-size:.7rem; padding:1px 6px; border-radius:99px; border:1px solid currentColor; margin-left:4px; white-space:nowrap; }
+details summary { cursor:pointer; color:var(--accent); font-size:.85rem; }
+.row { display:flex; gap:18px; flex-wrap:wrap; }
+img.leaf { width:100%; max-height:260px; object-fit:contain; border-radius:8px; background:var(--bg); }
+table { width:100%; border-collapse:collapse; font-size:.85rem; }
+td, th { text-align:left; padding:5px 4px; border-bottom:1px solid var(--line); }
+ul { margin:6px 0; padding-left:18px; }
+canvas { max-height:240px; }
+.btn { font:inherit; padding:10px 16px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer; }
+.btn.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+.btn:disabled { opacity:.5; cursor:wait; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🌱 Smart Farm: cloud dashboard</h1>
+  <span id="pPi" class="pill">Pi: ?</span>
+  <span id="pLive" class="pill">live: connecting</span>
+  <span class="muted" id="clock"></span>
+</header>
+<main>
+  <div class="card wide">
+    <h2>Live camera (Pi Camera on pi-node-01)</h2>
+    <div class="row" style="align-items:flex-start">
+      <div style="flex:1 1 380px;min-width:0">
+        <img class="leaf" id="camImg" alt="" hidden style="max-height:360px">
+        <div class="muted" id="camNote">Press “Live preview” to see what the Pi camera sees.</div>
+      </div>
+      <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:8px">
+        <button class="btn" id="camPrev">👁 Live preview</button>
+        <button class="btn primary" id="camShot">📷 Take photo &amp; detect</button>
+        <div class="muted" id="camBusy"></div>
+      </div>
+    </div>
+    <div class="muted" style="margin-top:6px">Tip: one leaf, 40–60 cm from the camera, good light. The model knows 14 crops only, and anything else still gets a crop label.</div>
+  </div>
+  <div class="card">
+    <h2>Climate (DHT11 on the Pi)</h2>
+    <div class="row">
+      <div><div class="muted">Temperature</div><div class="big" id="temp">–</div></div>
+      <div><div class="muted">Humidity</div><div class="big" id="hum">–</div></div>
+      <div><div class="muted">VPD</div><div class="big" id="vpd">–</div></div>
+    </div>
+    <div class="muted" id="climTs"></div>
+  </div>
+  <div class="card">
+    <h2>Soil moisture <span class="badge sim" id="soilSim" hidden>SIMULATED</span></h2>
+    <div class="big" id="soil">–</div>
+    <div class="muted" id="soilSrc"></div>
+    <details style="margin-top:8px"><summary>How is this measured?</summary>
+      <div class="muted" style="margin-top:6px">
+        <b>No real soil probe is connected yet.</b> The value comes from the <code>soil-sim</code> container on the laptop:
+        a small model of a pot drying out (faster when hot or dry air), running 60× faster than real time
+        (1 simulated hour per minute) and sending <code>plant/soil</code> every 30 s.<br>
+        <b>Real sensor (sketch ready, not wired yet):</b> a capacitive soil probe in the pot, wired to the NodeMCU's A0 pin
+        (<code>iot/nodemcu_leaf_node</code>). The NodeMCU averages 10 readings of the raw value (≈820 in dry air, ≈380 in water),
+        converts it to 0–100 % and publishes the same <code>plant/soil</code> message every 30 s. The simulator notices the real
+        readings and pauses by itself, so nothing else has to change.
+      </div></details>
+  </div>
+  <div class="card">
+    <h2>Does the plant need water?</h2>
+    <div class="big" id="water">–</div>
+    <div id="waterWhy" class="muted"></div>
+    <div id="watered" class="muted" style="margin-top:6px">Last watering: none seen yet</div>
+    <details style="margin-top:8px"><summary>How is watering decided and detected?</summary>
+      <div class="muted" style="margin-top:6px">
+        <b>Needs water?</b> The <code>irrigation</code> container compares the soil % with the band for the crop
+        (e.g. tomato: dry below 40 %, wilting below 25 %, keep watering up to 65 %). The crop comes from the latest
+        confident diagnosis. Hot or dry air (≥ 32 °C or VPD ≥ 1.6 kPa) raises the urgency, and the 2-hour trend gives
+        “dry in ~N h”.<br>
+        <b>Watering detected:</b> when the soil % jumps up by 8 points or more between two readings (drying only
+        lowers it slowly), the system records a watering, so a real probe catches watering by hand or rain too.
+        The 💧 button below just tells the simulator that water was added. With a real probe the jump itself is detected.
+      </div></details>
+    <button id="waterBtn" style="margin-top:10px;font:inherit;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer">💧 I watered it</button>
+  </div>
+  <div class="card">
+    <h2>Latest diagnosis</h2>
+    <img class="leaf" id="dImg" alt="" hidden>
+    <div class="big" id="dLabel">No photo yet</div>
+    <div class="muted" id="dMeta"></div>
+    <ul class="top3" id="dTop"></ul>
+    <div id="dCloud" class="muted"></div>
+  </div>
+  <div class="card">
+    <h2>What to do</h2>
+    <div id="advice" class="muted">Measures appear here after a diagnosis.</div>
+  </div>
+  <div class="card">
+    <h2>Alerts</h2>
+    <div id="alerts" class="muted">No alerts.</div>
+    <div class="muted" style="margin-top:8px;font-size:.75rem">From the notifier: diseases (medium+ severity), urgent watering, Pi offline, silent sensors, detected watering.</div>
+  </div>
+  <div class="card wide">
+    <h2>How it works: where data is measured, predicted and stored</h2>
+    <div class="flow">
+      <div class="stage"><h3>1 · Sensing</h3><ul>
+        <li>📷 Pi Camera on the Raspberry Pi 4 <span class="tag ok">real</span></li>
+        <li>🌡 DHT11 temperature / humidity on the Pi (GPIO4) <span class="tag warn">not wired yet</span></li>
+        <li>💧 Soil moisture: <code>soil-sim</code> container <span class="tag warn">simulated</span><br><span class="muted">real probe: NodeMCU sketch ready (capacitive probe on A0); the simulator pauses by itself when it sends</span></li>
+        <li>🔘 NodeMCU button → take photo <span class="tag warn">sketch not uploaded</span></li>
+      </ul></div>
+      <div class="stage"><h3>2 · Prediction &amp; decisions</h3><ul>
+        <li><b>Leaf disease: on the Pi (edge)</b>. MobileNetV2 INT8 TFLite, 38 classes / 14 crops, ~66 ms per photo, plus a photo check (blur / leaf). Works without the cloud.</li>
+        <li>Needs water + watering detection: <code>irrigation</code> container (laptop)</li>
+        <li>Measures (“What to do”): <code>advisor</code> container, knowledge base of 38 classes</li>
+        <li>Alerts: <code>notifier</code> container</li>
+        <li>☁ <b>Second opinion: <code>cloud-inference</code> container</b> (laptop). The same 38-class network at full precision (FP32), shown 6 versions of the photo (mirrored, flipped, zoomed). A diagnosis is given only when edge and cloud are both sure and agree; on field photos this cut confident-wrong answers from 56 % to 30 %. A better field model with “not a leaf” and “unknown plant” classes (v2) is trained on Colab and installed with one script.</li>
+      </ul></div>
+      <div class="stage"><h3>3 · Transport</h3><ul>
+        <li>MQTT: Mosquitto on the Pi, bridged to Mosquitto on the laptop (topics <code>plant/#</code>, QoS 1)</li>
+        <li>Photos: HTTP upload from the Pi to <code>/api/images</code></li>
+        <li>Offline? The Pi queues photos in <code>captures/outbox/</code> and MQTT messages in the bridge, then sends them later</li>
+      </ul></div>
+      <div class="stage"><h3>4 · Storage</h3><ul>
+        <li><b>Pi:</b> every photo + result in <code>~/plant_disease_edge/captures/</code> (<code>log.csv</code>)</li>
+        <li><b>Laptop:</b> PostgreSQL 16 (Docker volume <code>pgdata</code>), <span id="stDb">…</span></li>
+        <li><b>Photos:</b> Docker volume <code>images</code>, <span id="stImg">…</span></li>
+      </ul></div>
+    </div>
+  </div>
+  <div class="card wide">
+    <h2>Last 2 hours</h2>
+    <canvas id="chart"></canvas>
+  </div>
+  <div class="card wide">
+    <h2>Diagnosis history (edge + cloud)</h2>
+    <table><thead><tr><th>Time</th><th>Source</th><th>Result</th><th>Conf.</th><th>Device</th></tr></thead>
+    <tbody id="hist"></tbody></table>
+  </div>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const nice = s => (s || "").replace(".", ": ").replace(/_/g, " ");
+const t = ts => ts ? new Date(ts).toLocaleTimeString() : "";
+const statusCls = s => s === "healthy" ? "ok" : s === "disease" ? "bad" : "warn";
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function showClimate(d) {
+  if (d.temp_c == null) { $("temp").textContent = "–"; $("climTs").textContent = "no reading (sensor not wired?)"; return; }
+  $("temp").textContent = d.temp_c.toFixed(1) + " °C";
+  $("hum").textContent = d.humidity.toFixed(0) + " %";
+  $("vpd").textContent = d.vpd_kpa != null ? d.vpd_kpa.toFixed(2) + " kPa" : "–";
+  $("climTs").textContent = `fungal weather risk: ${d.fungal_risk ?? "?"} · ${t(d.ts || Date.now())}`;
+}
+function showSoil(d) {
+  $("soil").textContent = d.moisture_pct != null ? d.moisture_pct.toFixed(0) + " %" : "–";
+  $("soilSrc").textContent = `${d.simulated ? "simulated sensor (soil-sim, 60× speed)" : "sensor " + (d.device || "")} · ${t(d.ts || Date.now())}`;
+  $("soilSim").hidden = !d.simulated;
+}
+function showWatered(w) {
+  if (!w || w.to_pct == null) return;
+  const when = w.time ? w.time.slice(11, 16) : t(w.ts);
+  $("watered").textContent = `Last watering: ${when} · ${w.from_pct} % → ${w.to_pct} % (detected from the moisture jump${w.simulated ? ", simulated sensor" : ""})`;
+}
+function showIrrigation(d) {
+  if (d.last_watered) showWatered(d.last_watered);
+  const W = $("water");
+  W.textContent = d.need_water ? (d.urgency === "high" ? "Yes, water now" : "Yes, water soon") : "No";
+  W.className = "big " + (d.need_water ? (d.urgency === "high" ? "bad" : "warn") : "ok");
+  const dry = d.hours_to_dry != null && !(d.reason || "").includes("dry in") ? ` · dry in ~${d.hours_to_dry} h` : "";
+  $("waterWhy").textContent = (d.reason || "") + dry;
+}
+function showDiagnosis(r, src) {
+  const d = r.data || r;
+  if (src === "cloud") {
+    const verdict = d.status === "not_sure" ? `not sure (best guess ${esc(d.display || nice(d.class_id))})` : esc(d.display || nice(d.class_id));
+    const ag = d.agreement != null ? ` · ${Math.round(d.agreement * 6)}/6 views agree` : "";
+    $("dCloud").innerHTML = `☁ Cloud model (FP32 + 6-view check): <b class="${statusCls(d.status)}">${verdict}</b> (${(d.confidence*100).toFixed(1)}%${ag})`;
+    return;
+  }
+  const label = d.status === "not_sure" ? "Not sure: retake the photo" : (d.display || nice(d.class_id || d.label));
+  $("dLabel").textContent = label;
+  $("dLabel").className = "big " + statusCls(d.status);
+  const pct = (d.confidence*100).toFixed(1);
+  const low = d.status === "not_sure" || d.confidence < 0.9;
+  const guess = d.status === "not_sure" && d.top_label ? ` · best guess: ${esc(d.display || nice(d.class_id || d.top_label))}` : "";
+  const why = d.quality && d.quality.ok === false ? ` · photo: ${esc(d.quality.message || d.quality.problem || "")}` : "";
+  $("dMeta").innerHTML = `edge ${esc(d.device || r.device || "")} · ${pct}% · ${esc(d.time || t(r.ts))}${guess}${why}` +
+    (low ? ` <span class="badge" title="The model is not very sure. Check the top 3 below and retake the photo if needed.">⚠ low confidence</span>` : "");
+  const top = d.top3 || [];
+  $("dTop").innerHTML = top.length ? top.map(([n, p]) =>
+    `<li><span class="bar"><i style="width:${(p*100).toFixed(0)}%"></i></span><span>${esc(nice(n))}</span><span class="muted">${(p*100).toFixed(0)}%</span></li>`).join("") : "";
+  $("dCloud").textContent = d.status === "not_sure" ? "" : "☁ Cloud model: checking…";
+  const url = r.image_url || (d.image_id ? `/images/${d.image_id}.jpg` : null);
+  if (url) { const i = $("dImg"); i.hidden = false; i.src = url + "?t=" + Date.now(); i.onerror = () => i.hidden = true; }
+  if (d.advice) $("advice").textContent = d.advice;
+}
+function showAdvice(d) {
+  const list = (k, title) => d[k] && d[k].length ? `<b>${title}</b><ul>${d[k].map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
+  const sev = d.verdict === "disease" && d.severity ? ` <span class="badge sev-${esc(d.severity)}">severity: ${esc(d.severity)}</span>` : "";
+  const agree = d.pending_cloud ? ` <span class="muted">⏳ waiting for the cloud check…</span>` : d.agreement === "agree" ? " ☁✓" : "";
+  $("advice").innerHTML = `<div class="${statusCls(d.status)}"><b>${esc(d.title || d.verdict)}</b>${sev}${agree}</div>
+    <div class="muted">${esc(d.summary || "")}</div>` + (d.climate_note ? `<div class="muted">🌦 ${esc(d.climate_note)}</div>` : "") +
+    list("immediate", d.verdict === "uncertain" ? "What to do" : "Do now") + list("cultural", "Organic / cultural") +
+    list("chemical", "Chemical (follow the local label)") + list("prevention", "Prevention");
+}
+function addAlert(a) {
+  const box = $("alerts");
+  if (box.textContent === "No alerts.") box.innerHTML = "";
+  const cls = a.level === "critical" ? "bad" : a.level === "warning" ? "warn" : "muted";
+  box.insertAdjacentHTML("afterbegin", `<div class="${cls}">${t(a.ts || Date.now())} · ${esc(a.message)}</div>`);
+  while (box.children.length > 8) box.lastChild.remove();
+}
+function setPi(online) { const p = $("pPi"); p.textContent = "Pi: " + (online ? "online" : "offline"); p.className = "pill " + (online ? "on" : "off"); }
+
+// chart
+const chart = new Chart($("chart"), {
+  type: "line",
+  data: { datasets: [
+    { label: "Temperature °C", data: [], yAxisID: "y", borderColor: "#d97706", pointRadius: 0, tension: .3 },
+    { label: "Humidity %", data: [], yAxisID: "y1", borderColor: "#2563eb", pointRadius: 0, tension: .3 },
+    { label: "Soil moisture %", data: [], yAxisID: "y1", borderColor: "#16a34a", pointRadius: 0, tension: .3 },
+  ]},
+  options: { animation: false, parsing: false, interaction: { mode: "nearest", intersect: false },
+    scales: { x: { type: "linear", ticks: { callback: v => new Date(v).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}) } },
+              y: { position: "left", title: { display: true, text: "°C" } },
+              y1: { position: "right", min: 0, max: 100, grid: { drawOnChartArea: false }, title: { display: true, text: "%" } } } }
+});
+function pushPoint(i, ts, v) {
+  if (v == null) return;
+  const ds = chart.data.datasets[i].data;
+  ds.push({ x: new Date(ts).getTime(), y: v });
+  const cut = Date.now() - 2 * 3600e3;
+  while (ds.length && ds[0].x < cut) ds.shift();
+}
+
+async function j(url) { const r = await fetch(url); return r.json(); }
+async function loadHistory() {
+  const h = await j("/api/diagnoses?limit=15");
+  $("hist").innerHTML = h.map(r => `<tr><td>${t(r.ts)}</td><td>${r.source}</td>
+    <td class="${statusCls(r.status)}">${esc(r.status === "not_sure" ? "not sure" : (r.data.display || nice(r.class_id)))}</td>
+    <td>${r.confidence != null ? (r.confidence*100).toFixed(0) + "%" : "–"}</td><td>${esc(r.device || "")}</td></tr>`).join("");
+  return h;
+}
+async function loadStorage() {
+  try {
+    const s = await j("/api/storage"), T = s.postgres.tables, k = s.postgres.telemetry_by_kind;
+    $("stDb").textContent = `${s.postgres.size}: ${T.telemetry} MQTT messages (soil ${k.soil || 0}, climate ${k.climate || 0}), ` +
+      `${T.diagnoses} diagnoses, ${T.advice} advice, ${T.alerts} alerts, ${T.irrigation_events} watering decisions`;
+    $("stImg").textContent = `${s.photos.count} photos (${s.photos.mb} MB)`;
+  } catch (e) { $("stDb").textContent = "(could not read)"; }
+}
+async function init() {
+  loadStorage(); setInterval(loadStorage, 60000);
+  try { const w = (await j("/api/latest")).watered; if (w) showWatered(w); } catch (e) {}
+  const L = await j("/api/latest");
+  if (L.climate) showClimate(L.climate);
+  if (L.soil) showSoil(L.soil);
+  if (L.irrigation) showIrrigation(L.irrigation);
+  if (L.status) setPi(L.status.state === "online");
+  const h = await loadHistory();
+  const edge = h.find(r => r.source === "edge");
+  if (edge) { showDiagnosis(edge, "edge"); const c = h.find(r => r.source === "cloud" && r.image_id === edge.image_id); if (c) showDiagnosis(c, "cloud"); }
+  if (L.advice) showAdvice(L.advice);
+  (await j("/api/alerts?limit=8")).reverse().forEach(addAlert);
+  const [cl, so] = await Promise.all([j("/api/history?kind=climate"), j("/api/history?kind=soil")]);
+  cl.forEach(d => { pushPoint(0, d.ts, d.temp_c); pushPoint(1, d.ts, d.humidity); });
+  so.forEach(d => pushPoint(2, d.ts, d.moisture_pct));
+  chart.update();
+}
+function live() {
+  const es = new EventSource("/api/stream");
+  es.onopen = () => { $("pLive").textContent = "live"; $("pLive").className = "pill on"; };
+  es.onerror = () => { $("pLive").textContent = "live: reconnecting"; $("pLive").className = "pill off"; };
+  es.onmessage = e => {
+    const { topic, data } = JSON.parse(e.data);
+    const kind = topic.split("/").pop();
+    const now = Date.now();
+    if (kind === "climate") { showClimate(data); pushPoint(0, now, data.temp_c); pushPoint(1, now, data.humidity); chart.update(); }
+    else if (kind === "soil") { showSoil(data); pushPoint(2, now, data.moisture_pct); chart.update(); }
+    else if (kind === "irrigation") showIrrigation(data);
+    else if (kind === "watered") showWatered(data);
+    else if (kind === "diagnosis") { showDiagnosis(data, "edge"); loadHistory(); captureDone(); }
+    else if (kind === "image") { const i = $("dImg"); i.hidden = false; i.src = data.url + "?t=" + now; }
+    else if (kind === "cloud_diagnosis") { showDiagnosis(data, "cloud"); loadHistory(); }
+    else if (kind === "advice") showAdvice(data);
+    else if (kind === "alert") addAlert(data);
+    else if (kind === "status") setPi(data.state === "online");
+  };
+}
+// live camera: preview frames are proxied from the Pi; capture goes over MQTT (plant/capture)
+let camOn = false, camBusy = false, waiting = false;
+function nextFrame() {
+  if (!camOn || camBusy) return;
+  camBusy = true;
+  const img = new Image();
+  img.onload = () => { const c = $("camImg"); c.hidden = false; c.src = img.src; camBusy = false;
+    $("camNote").textContent = "Live from the Pi camera (about 1 frame / 2 s). Centre the leaf, then Take photo."; setTimeout(nextFrame, 700); };
+  img.onerror = () => { camBusy = false; $("camNote").textContent = "Pi camera not answering, retrying…"; setTimeout(nextFrame, 3000); };
+  img.src = "/api/camera/preview.jpg?t=" + Date.now();
+}
+$("camPrev").onclick = () => { camOn = !camOn; $("camPrev").textContent = camOn ? "⏸ Stop preview" : "👁 Live preview"; nextFrame(); };
+$("camShot").onclick = async () => {
+  const was = camOn; camOn = false;                       // free the camera for the capture
+  while (camBusy) await new Promise(r => setTimeout(r, 100));
+  $("camShot").disabled = true; $("camBusy").textContent = "Taking photo on the Pi…"; waiting = true;
+  await fetch("/api/camera/capture", {method: "POST"});
+  setTimeout(() => { if (waiting) { $("camBusy").textContent = "No answer from the Pi yet (camera busy or offline?)"; $("camShot").disabled = false; waiting = false; } }, 20000);
+  if (was) setTimeout(() => { camOn = true; nextFrame(); }, 4000);
+};
+function captureDone() { if (!waiting) return; waiting = false; $("camShot").disabled = false; $("camBusy").textContent = "Done: see Latest diagnosis ↓"; }
+
+$("waterBtn").onclick = async () => { await fetch("/api/water?amount_pct=35", {method: "POST"}); $("waterWhy").textContent = "Watering sent…"; };
+setInterval(() => $("clock").textContent = new Date().toLocaleTimeString(), 1000);
+init().catch(e => console.error(e)).finally(live);
+</script>
+</body>
+</html>

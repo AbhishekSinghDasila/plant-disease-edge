@@ -1,0 +1,185 @@
+{
+ "n": 663,
+ "accuracy": 0.2911010558069382,
+ "macro_f1": 0.2080032342073097,
+ "per_class_f1": {
+  "bacterial_spot": 0.248,
+  "early_blight": 0.3263598326359833,
+  "late_blight": 0.49122807017543857,
+  "leaf_mold": 0.06976744186046512,
+  "septoria_leaf_spot": 0.21978021978021978,
+  "spider_mites": 0.0,
+  "yellow_leaf_curl_virus": 0.4122137404580153,
+  "mosaic_virus": 0.06896551724137931,
+  "healthy": 0.03571428571428571
+ },
+ "confusion_matrix": [
+  [
+   31,
+   27,
+   17,
+   0,
+   10,
+   0,
+   7,
+   6,
+   1,
+   1
+  ],
+  [
+   14,
+   39,
+   14,
+   0,
+   4,
+   0,
+   5,
+   2,
+   0,
+   0
+  ],
+  [
+   4,
+   24,
+   70,
+   1,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0
+  ],
+  [
+   13,
+   15,
+   42,
+   3,
+   1,
+   0,
+   5,
+   0,
+   2,
+   0
+  ],
+  [
+   50,
+   41,
+   10,
+   0,
+   20,
+   0,
+   5,
+   12,
+   1,
+   1
+  ],
+  [
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   19,
+   5,
+   7,
+   1,
+   0,
+   0,
+   5,
+   27,
+   1,
+   0
+  ],
+  [
+   9,
+   4,
+   6,
+   0,
+   4,
+   0,
+   3,
+   16,
+   2,
+   0
+  ],
+  [
+   9,
+   6,
+   18,
+   0,
+   3,
+   1,
+   6,
+   2,
+   7,
+   1
+  ]
+ ],
+ "threshold": 0.6,
+ "threshold_sweep": [
+  {
+   "threshold": 0.0,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.2911010558069382
+  },
+  {
+   "threshold": 0.3,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.2911010558069382
+  },
+  {
+   "threshold": 0.4,
+   "rejected_share": 0.0015082956259426794,
+   "accuracy_on_accepted": 0.29154078549848944
+  },
+  {
+   "threshold": 0.5,
+   "rejected_share": 0.02865761689291102,
+   "accuracy_on_accepted": 0.296583850931677
+  },
+  {
+   "threshold": 0.6,
+   "rejected_share": 0.05580693815987936,
+   "accuracy_on_accepted": 0.2971246006389776
+  },
+  {
+   "threshold": 0.7,
+   "rejected_share": 0.11764705882352944,
+   "accuracy_on_accepted": 0.29914529914529914
+  },
+  {
+   "threshold": 0.8,
+   "rejected_share": 0.1568627450980392,
+   "accuracy_on_accepted": 0.3005366726296959
+  },
+  {
+   "threshold": 0.9,
+   "rejected_share": 0.21266968325791857,
+   "accuracy_on_accepted": 0.31226053639846746
+  }
+ ],
+ "rejected_share": 0.05580693815987936,
+ "accuracy_on_accepted": 0.2971246006389776,
+ "model": "pretrained_mnv2_int8",
+ "set": "field"
+}

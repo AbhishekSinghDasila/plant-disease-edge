@@ -1,0 +1,185 @@
+{
+ "n": 663,
+ "accuracy": 0.28808446455505277,
+ "macro_f1": 0.19998813100118829,
+ "per_class_f1": {
+  "bacterial_spot": 0.05263157894736842,
+  "early_blight": 0.3193916349809886,
+  "late_blight": 0.45141065830721006,
+  "leaf_mold": 0.08888888888888889,
+  "septoria_leaf_spot": 0.29896907216494845,
+  "spider_mites": 0.0,
+  "yellow_leaf_curl_virus": 0.49673202614379086,
+  "mosaic_virus": 0.057971014492753624,
+  "healthy": 0.03389830508474576
+ },
+ "confusion_matrix": [
+  [
+   3,
+   30,
+   28,
+   0,
+   12,
+   0,
+   13,
+   9,
+   2,
+   3
+  ],
+  [
+   1,
+   42,
+   20,
+   0,
+   6,
+   0,
+   7,
+   2,
+   0,
+   0
+  ],
+  [
+   0,
+   25,
+   72,
+   1,
+   1,
+   0,
+   0,
+   1,
+   1,
+   0
+  ],
+  [
+   2,
+   18,
+   46,
+   4,
+   0,
+   0,
+   6,
+   3,
+   2,
+   0
+  ],
+  [
+   8,
+   49,
+   16,
+   0,
+   29,
+   0,
+   18,
+   14,
+   4,
+   2
+  ],
+  [
+   0,
+   0,
+   1,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   6,
+   7,
+   2,
+   0,
+   0,
+   9,
+   38,
+   3,
+   0
+  ],
+  [
+   0,
+   5,
+   9,
+   1,
+   4,
+   0,
+   4,
+   19,
+   2,
+   0
+  ],
+  [
+   0,
+   10,
+   19,
+   1,
+   2,
+   0,
+   7,
+   2,
+   11,
+   1
+  ]
+ ],
+ "threshold": 0.6,
+ "threshold_sweep": [
+  {
+   "threshold": 0.0,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.28808446455505277
+  },
+  {
+   "threshold": 0.3,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.28808446455505277
+  },
+  {
+   "threshold": 0.4,
+   "rejected_share": 0.0015082956259426794,
+   "accuracy_on_accepted": 0.28851963746223563
+  },
+  {
+   "threshold": 0.5,
+   "rejected_share": 0.021116138763197623,
+   "accuracy_on_accepted": 0.288135593220339
+  },
+  {
+   "threshold": 0.6,
+   "rejected_share": 0.08597285067873306,
+   "accuracy_on_accepted": 0.29042904290429045
+  },
+  {
+   "threshold": 0.7,
+   "rejected_share": 0.1342383107088989,
+   "accuracy_on_accepted": 0.2979094076655052
+  },
+  {
+   "threshold": 0.8,
+   "rejected_share": 0.20814479638009054,
+   "accuracy_on_accepted": 0.30095238095238097
+  },
+  {
+   "threshold": 0.9,
+   "rejected_share": 0.3092006033182504,
+   "accuracy_on_accepted": 0.3165938864628821
+  }
+ ],
+ "rejected_share": 0.08597285067873306,
+ "accuracy_on_accepted": 0.29042904290429045,
+ "model": "pretrained_mnv2_fp32",
+ "set": "field"
+}

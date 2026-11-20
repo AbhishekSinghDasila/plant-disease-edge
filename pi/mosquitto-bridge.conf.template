@@ -1,0 +1,16 @@
+# Pi Mosquitto -> cloud Mosquitto bridge (installed by pi/install_bridge.sh as
+# /etc/mosquitto/conf.d/bridge.conf). The Pi keeps its own broker, so the farm keeps working
+# while the cloud is down; messages for the cloud are queued and sent when it comes back.
+connection cloud
+address __CLOUD_HOST__:1883
+clientid pi-node-01-bridge
+# all plant/... topics in both directions (edge results up, cloud advice / irrigation down)
+topic plant/# both 1
+cleansession false
+try_private true
+restart_timeout 5 30
+keepalive_interval 30
+queue_qos0_messages true
+max_queued_messages 10000
+notifications true
+notification_topic plant/bridge/pi-node-01

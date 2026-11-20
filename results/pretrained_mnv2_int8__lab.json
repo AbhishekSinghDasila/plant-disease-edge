@@ -1,0 +1,186 @@
+{
+ "n": 2734,
+ "accuracy": 0.9875640087783467,
+ "macro_f1": 0.9844188727370753,
+ "per_class_f1": {
+  "bacterial_spot": 0.9937304075235109,
+  "early_blight": 0.9547038327526133,
+  "late_blight": 0.9930795847750865,
+  "leaf_mold": 0.9895470383275261,
+  "septoria_leaf_spot": 0.9906191369606003,
+  "spider_mites": 0.9757085020242915,
+  "target_spot": 0.965675057208238,
+  "yellow_leaf_curl_virus": 0.9975186104218362,
+  "mosaic_virus": 1.0,
+  "healthy": 0.9836065573770492
+ },
+ "confusion_matrix": [
+  [
+   317,
+   0,
+   0,
+   1,
+   1,
+   0,
+   0,
+   1,
+   0,
+   0
+  ],
+  [
+   1,
+   137,
+   3,
+   0,
+   0,
+   0,
+   7,
+   2,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   287,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   142,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   1,
+   0,
+   264,
+   0,
+   0,
+   0,
+   0,
+   2
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   241,
+   6,
+   0,
+   0,
+   5
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   211,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   804,
+   0,
+   1
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   57,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   240
+  ]
+ ],
+ "threshold": 0.6,
+ "threshold_sweep": [
+  {
+   "threshold": 0.0,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.9875640087783467
+  },
+  {
+   "threshold": 0.3,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.9875640087783467
+  },
+  {
+   "threshold": 0.4,
+   "rejected_share": 0.000365764447695649,
+   "accuracy_on_accepted": 0.9879253567508233
+  },
+  {
+   "threshold": 0.5,
+   "rejected_share": 0.003291880029261174,
+   "accuracy_on_accepted": 0.9889908256880734
+  },
+  {
+   "threshold": 0.6,
+   "rejected_share": 0.004754937820043881,
+   "accuracy_on_accepted": 0.9897096655641309
+  },
+  {
+   "threshold": 0.7,
+   "rejected_share": 0.009875640087783522,
+   "accuracy_on_accepted": 0.990764684152198
+  },
+  {
+   "threshold": 0.8,
+   "rejected_share": 0.012801755669348935,
+   "accuracy_on_accepted": 0.9918488329010745
+  },
+  {
+   "threshold": 0.9,
+   "rejected_share": 0.024140453547915164,
+   "accuracy_on_accepted": 0.9955022488755623
+  }
+ ],
+ "rejected_share": 0.004754937820043881,
+ "accuracy_on_accepted": 0.9897096655641309,
+ "model": "pretrained_mnv2_int8",
+ "set": "lab"
+}

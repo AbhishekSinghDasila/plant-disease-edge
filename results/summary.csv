@@ -1,0 +1,7 @@
+time,model,set,n,accuracy,macro_f1,rejected_share@0.6,acc_on_accepted@0.6
+2026-11-17 19:24,pretrained_mnv2_fp32,lab,2734,0.9909,0.9878,0.0037,0.9927
+2026-11-17 19:25,pretrained_mnv2_fp32,field,663,0.2881,0.2000,0.0860,0.2904
+2026-11-17 19:26,pretrained_mnv2_int8,lab,2734,0.9876,0.9844,0.0048,0.9897
+2026-11-17 19:26,pretrained_mnv2_int8,field,663,0.2911,0.2080,0.0558,0.2971
+2026-11-17 21:00,pv38_int8,pv38_allcrops,1132,0.9859,,,
+2026-11-17 21:00,pv38_fp32,pv38_allcrops,1132,0.9920,,,

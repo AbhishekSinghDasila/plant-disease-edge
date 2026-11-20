@@ -1,0 +1,20 @@
+# Soil moisture bands per crop, in % of the sensor's calibrated range (0 = dry air, 100 = in water).
+# Rough guides for a capacitive probe in potting soil; tune them for your soil and plants.
+#   wilting: below this the plant is stressed now -> water now
+#   dry:     below this the plant needs water
+#   target:  watering stops / "needs water" clears above this (hysteresis band dry..target)
+default:    {dry: 35, target: 60, wilting: 20}
+tomato:     {dry: 40, target: 65, wilting: 25}   # steady moisture also prevents blossom-end rot / fruit cracking
+potato:     {dry: 40, target: 65, wilting: 25}
+pepper:     {dry: 40, target: 65, wilting: 25}
+squash:     {dry: 40, target: 65, wilting: 25}
+strawberry: {dry: 45, target: 70, wilting: 30}   # shallow roots, dries out fast
+blueberry:  {dry: 45, target: 70, wilting: 30}   # shallow roots, likes moist acidic soil
+raspberry:  {dry: 40, target: 65, wilting: 25}
+soybean:    {dry: 35, target: 60, wilting: 20}
+corn:       {dry: 35, target: 60, wilting: 20}
+apple:      {dry: 30, target: 55, wilting: 18}   # trees: deep roots, water less often but deeply
+cherry:     {dry: 30, target: 55, wilting: 18}
+peach:      {dry: 30, target: 55, wilting: 18}
+orange:     {dry: 30, target: 55, wilting: 18}   # citrus dislikes waterlogging
+grape:      {dry: 25, target: 50, wilting: 15}   # vines tolerate drier soil

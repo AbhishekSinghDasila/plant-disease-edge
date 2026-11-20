@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leaf Doctor</title>
+<style>
+  :root { --bg:#f4f6f1; --card:#fff; --ink:#1d2a1f; --muted:#5f6d61; --line:#dfe5dc;
+          --ok:#2e7d32; --bad:#c62828; --warn:#b26a00; --accent:#2e7d32; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#121712; --card:#1b221c; --ink:#e6efe6; --muted:#9aab9c; --line:#2c372d;
+            --ok:#66bb6a; --bad:#ef5350; --warn:#ffb74d; --accent:#66bb6a; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.45 system-ui, sans-serif; background:var(--bg); color:var(--ink); }
+  main { max-width:880px; margin:0 auto; padding:16px; }
+  h1 { font-size:1.4rem; margin:4px 0 2px; }
+  .sub { color:var(--muted); font-size:.9rem; margin-bottom:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
+  .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+  button, label.btn { font:inherit; padding:12px 18px; border-radius:10px; border:1px solid var(--line);
+          background:var(--card); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  button:disabled { opacity:.5; cursor:default; }
+  input[type=file] { display:none; }
+  .result { display:grid; grid-template-columns: minmax(0,240px) 1fr; gap:16px; }
+  @media (max-width:560px) { .result { grid-template-columns:1fr; } }
+  .result img { width:100%; border-radius:8px; border:1px solid var(--line); }
+  .label { font-size:1.5rem; font-weight:600; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+  .bar { height:8px; background:var(--line); border-radius:4px; overflow:hidden; margin:2px 0 8px; }
+  .bar > div { height:100%; background:var(--accent); }
+  .muted { color:var(--muted); font-size:.9rem; }
+  table { width:100%; border-collapse:collapse; font-size:.9rem; }
+  td, th { padding:6px 4px; border-bottom:1px solid var(--line); text-align:left; }
+  .pill { display:inline-block; padding:2px 8px; border-radius:999px; border:1px solid var(--line); font-size:.8rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🌱 Leaf Doctor — tomato</h1>
+  <div class="sub">Offline diagnosis on the Raspberry Pi ·
+    <span id="status" class="pill">…</span></div>
+
+  <div class="card" id="climCard" hidden>
+    <div class="row" style="gap:24px">
+      <div><div class="muted">Temperature</div><div class="label" id="cTemp">–</div></div>
+      <div><div class="muted">Humidity</div><div class="label" id="cHum">–</div></div>
+      <div><div class="muted">Fungal disease weather risk</div><div class="label" id="cRisk">–</div></div>
+    </div>
+    <p class="muted" style="margin:8px 0 0" id="cNote"></p>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button class="primary" id="capBtn" {% if not camera %}disabled title="no camera on this device"{% endif %}>📷 Take photo</button>
+      <button id="prevBtn" {% if not camera %}disabled{% endif %}>👁 Live preview</button>
+      <label class="btn" for="file">⬆ Upload photo</label>
+      <input type="file" id="file" accept="image/*" capture="environment">
+      <span id="busy" class="muted"></span>
+    </div>
+    <div id="prevBox" hidden style="margin-top:12px">
+      <img id="prevImg" alt="live camera preview" style="width:100%;max-width:640px;border-radius:8px;border:1px solid var(--line)">
+      <div class="muted" id="prevNote">Live from the Pi camera (refreshes every ~2 s). Centre the leaf, then press Take photo.</div>
+    </div>
+    <p class="muted" style="margin:10px 0 0">One leaf, fill the frame, good light. Below {{ (threshold*100)|int }}% confidence the app says “not sure” instead of guessing.</p>
+  </div>
+
+  <div class="card" id="resultCard" hidden>
+    <div class="result">
+      <img id="rImg" alt="captured leaf">
+      <div>
+        <div id="rLabel" class="label"></div>
+        <div class="muted" id="rConf"></div>
+        <p id="rAdvice"></p>
+        <div id="rMeasures"></div>
+        <div id="rTop"></div>
+        <div class="muted" id="rMeta"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <strong>Recent</strong>
+    <table><thead><tr><th>Time</th><th>Result</th><th>Conf.</th><th>Source</th></tr></thead>
+      <tbody id="hist"></tbody></table>
+  </div>
+</main>
+<script>
+// labels are "crop.disease" ids (multi-crop model) or old tomato short names
+const nice = s => s.includes(".") ? s.replace(".", ": ").replace(/_/g, " ") : s.replace(/_/g, " ");
+const isHealthy = r => r.label === "healthy" || r.disease === "healthy" || r.label.endsWith(".healthy");
+const cls = r => !r.is_sure ? "warn" : (isHealthy(r) ? "ok" : "bad");
+const title = r => r.display || nice(r.label);
+
+function show(r) {
+  if (r.error) { document.getElementById("busy").textContent = r.error; return; }
+  document.getElementById("resultCard").hidden = false;
+  document.getElementById("rImg").src = "/captures/" + r.image;
+  const L = document.getElementById("rLabel");
+  const q = r.quality || {};
+  L.textContent = r.is_sure ? title(r) : (q.problem === "blurry" ? "Retake: too blurry"
+                 : q.problem === "no_leaf" ? "Retake: no leaf found" : "Not sure");
+  L.className = "label " + cls(r);
+  document.getElementById("rConf").textContent = r.is_sure
+    ? `${(r.confidence*100).toFixed(1)}% confident`
+    : q.problem ? `Photo check failed, so the model's guess (${nice(r.top_label)}) is ignored`
+    : `Best guess: ${nice(r.top_label)} (${(r.confidence*100).toFixed(1)}%)`;
+  document.getElementById("rAdvice").textContent = r.advice;
+  document.getElementById("rTop").innerHTML = r.top3.map(([n, p]) =>
+    `<div class="muted">${nice(n)} — ${(p*100).toFixed(1)}%</div><div class="bar"><div style="width:${p*100}%"></div></div>`).join("");
+  const clim = r.temp_c != null ? ` · ${r.temp_c} °C, ${r.humidity} % RH` : "";
+  const qc = q.sharpness != null ? ` · sharpness ${q.sharpness}, leaf ${Math.round(q.leaf_fraction*100)}%` : "";
+  document.getElementById("rMeta").textContent = `${r.latency_ms} ms on device · ${r.source} · ${r.time}${clim}${qc}`;
+  loadHistory();
+  loadMeasures(r.image_id);
+}
+// measures from the cloud disease-advisor (arrive over MQTT a second or two after the result)
+let measuresFor = null;
+async function loadMeasures(id) {
+  const box = document.getElementById("rMeasures");
+  measuresFor = id; box.innerHTML = id ? `<div class="muted">Asking the cloud advisor for measures…</div>` : "";
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  let pending = null;
+  for (let i = 0; id && i < 25; i++) {
+    await new Promise(ok => setTimeout(ok, 1500));
+    if (measuresFor !== id) return;                      // a newer photo was taken
+    const res = await fetch("/api/advice/" + encodeURIComponent(id));
+    if (!res.ok) continue;
+    const a = await res.json();
+    if (a.pending_cloud) { pending = a; if (i < 24) { box.innerHTML = `<div class="muted">Edge result in, waiting for the cloud check…</div>`; continue; } }
+    const list = (k, t) => a[k] && a[k].length ? `<b>${t}</b><ul>${a[k].map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : "";
+    const head = a.verdict === "uncertain" ? `<div style="margin-top:8px" class="warn"><b>☁ ${esc(a.title)}</b></div><div class="muted">${esc(a.summary)}</div>` : "";
+    box.innerHTML = head + `<div style="margin-top:8px"><b>☁ What to do</b>${a.severity && a.severity !== "none" ? ` (severity: ${esc(a.severity)})` : ""}</div>` +
+      (a.climate_note ? `<div class="muted">${esc(a.climate_note)}</div>` : "") +
+      list("immediate", "Now") + list("cultural", "Organic / cultural") + list("chemical", "Chemical") + list("prevention", "Prevention");
+    return;
+  }
+  if (measuresFor === id) box.innerHTML = `<div class="muted">Cloud advisor not reachable: only the short offline advice above.</div>`;
+}
+
+async function send(url, body) {
+  const busy = document.getElementById("busy");
+  busy.textContent = "Analysing…";
+  try { const res = await fetch(url, {method: "POST", body}); show(await res.json()); busy.textContent = ""; }
+  catch (e) { busy.textContent = "Error: " + e; }
+}
+
+let previewOn = false, previewBusy = false;
+function nextPreview() {
+  if (!previewOn || previewBusy) return;
+  previewBusy = true;
+  const img = new Image();
+  img.onload = () => { document.getElementById("prevImg").src = img.src; previewBusy = false;
+                       document.getElementById("prevNote").textContent = "Live from the Pi camera (refreshes every ~2 s). Centre the leaf, then press Take photo."; setTimeout(nextPreview, 800); };
+  img.onerror = () => { previewBusy = false; document.getElementById("prevNote").textContent = "Camera not answering — retrying…"; setTimeout(nextPreview, 3000); };
+  img.src = "/api/preview.jpg?t=" + Date.now();
+}
+document.getElementById("prevBtn").onclick = () => {
+  previewOn = !previewOn;
+  document.getElementById("prevBox").hidden = !previewOn;
+  document.getElementById("prevBtn").textContent = previewOn ? "⏸ Stop preview" : "👁 Live preview";
+  nextPreview();
+};
+document.getElementById("capBtn").onclick = async () => {
+  // pause the preview so it does not fight the capture for the camera
+  const was = previewOn; previewOn = false;
+  while (previewBusy) await new Promise(r => setTimeout(r, 100));
+  await send("/api/capture");
+  if (was) { previewOn = true; nextPreview(); }
+};
+document.getElementById("file").onchange = e => {
+  if (!e.target.files.length) return;
+  const fd = new FormData(); fd.append("image", e.target.files[0]); send("/api/predict", fd);
+  e.target.value = "";
+};
+
+let lastTop = null;
+async function loadHistory() {
+  const h = await (await fetch("/api/history")).json();
+  document.getElementById("hist").innerHTML = h.map(r =>
+    `<tr><td>${r.time.slice(11)}</td><td class="${cls(r)}">${r.is_sure ? title(r) : "not sure"}</td>
+     <td>${r.is_sure ? (r.confidence*100).toFixed(0) + "%" : "–"}</td><td>${r.source}</td></tr>`).join("");
+  // show results triggered elsewhere (e.g. the NodeMCU button) automatically
+  if (h.length && lastTop !== null && h[0].image !== lastTop) show(h[0]);
+  lastTop = h.length ? h[0].image : "";
+}
+async function loadStatus() {
+  const s = await (await fetch("/api/status")).json();
+  const mq = s.mqtt === null ? "MQTT off" : (s.mqtt ? "MQTT connected" : "MQTT offline");
+  document.getElementById("status").textContent = `camera: ${s.camera || "none"} · ${mq}`;
+  showClimate(s.climate || {});
+}
+function showClimate(c) {
+  const card = document.getElementById("climCard");
+  card.hidden = !c.sensor;
+  if (!c.sensor) return;
+  const fresh = c.temp_c != null;
+  document.getElementById("cTemp").textContent = fresh ? `${c.temp_c} °C` : "–";
+  document.getElementById("cHum").textContent = fresh ? `${c.humidity} %` : "–";
+  const R = document.getElementById("cRisk");
+  R.textContent = fresh ? c.fungal_risk : "–";
+  R.className = "label " + ({high: "bad", medium: "warn", low: "ok"}[c.fungal_risk] || "");
+  document.getElementById("cNote").textContent = fresh
+    ? `${c.sensor} · updated ${Math.round(c.age_s)} s ago · long spells above 85 % humidity favour blight and leaf mold (general guidance)`
+    : `${c.sensor}: no reading yet (${c.fails}/${c.reads} reads failed) — check the wiring if this stays`;
+}
+loadHistory(); loadStatus();
+setInterval(loadHistory, 3000); setInterval(loadStatus, 5000);
+</script>
+</body>
+</html>

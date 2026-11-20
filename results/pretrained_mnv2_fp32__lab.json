@@ -1,0 +1,186 @@
+{
+ "n": 2734,
+ "accuracy": 0.9908558888076079,
+ "macro_f1": 0.9878311001145779,
+ "per_class_f1": {
+  "bacterial_spot": 0.9953051643192489,
+  "early_blight": 0.9477351916376306,
+  "late_blight": 0.9896193771626297,
+  "leaf_mold": 0.9895470383275261,
+  "septoria_leaf_spot": 0.9906191369606003,
+  "spider_mites": 0.9900990099009901,
+  "target_spot": 0.9813953488372092,
+  "yellow_leaf_curl_virus": 0.9981401115933044,
+  "mosaic_virus": 1.0,
+  "healthy": 0.995850622406639
+ },
+ "confusion_matrix": [
+  [
+   318,
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   1,
+   0,
+   0
+  ],
+  [
+   1,
+   136,
+   4,
+   1,
+   1,
+   0,
+   5,
+   2,
+   0,
+   0
+  ],
+  [
+   0,
+   1,
+   286,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   142,
+   0,
+   2,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   1,
+   0,
+   264,
+   0,
+   0,
+   0,
+   0,
+   2
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   250,
+   2,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   211,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   805,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   57,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   240
+  ]
+ ],
+ "threshold": 0.6,
+ "threshold_sweep": [
+  {
+   "threshold": 0.0,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.9908558888076079
+  },
+  {
+   "threshold": 0.3,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.9908558888076079
+  },
+  {
+   "threshold": 0.4,
+   "rejected_share": 0.0,
+   "accuracy_on_accepted": 0.9908558888076079
+  },
+  {
+   "threshold": 0.5,
+   "rejected_share": 0.001828822238478467,
+   "accuracy_on_accepted": 0.9919384389886405
+  },
+  {
+   "threshold": 0.6,
+   "rejected_share": 0.003657644476956823,
+   "accuracy_on_accepted": 0.9926578560939795
+  },
+  {
+   "threshold": 0.7,
+   "rejected_share": 0.006583760058522348,
+   "accuracy_on_accepted": 0.9937407952871871
+  },
+  {
+   "threshold": 0.8,
+   "rejected_share": 0.009875640087783522,
+   "accuracy_on_accepted": 0.9948282231252309
+  },
+  {
+   "threshold": 0.9,
+   "rejected_share": 0.016459400146305758,
+   "accuracy_on_accepted": 0.9970249163257716
+  }
+ ],
+ "rejected_share": 0.003657644476956823,
+ "accuracy_on_accepted": 0.9926578560939795,
+ "model": "pretrained_mnv2_fp32",
+ "set": "lab"
+}

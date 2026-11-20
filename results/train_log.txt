@@ -1,0 +1,70 @@
+
+===== 19:21 1/6 baseline (standard augmentation)
+2026-11-17 19:21:09.049814: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-11-17 19:21:09.073276: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-11-17 19:21:09.080079: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+mobilenetv3small: 944,890 parameters, 12707 training images
+Epoch 1/5
+397/397 - 71s - loss: 1.4159 - accuracy: 0.6572 - val_loss: 1.0343 - val_accuracy: 0.8065 - 71s/epoch - 178ms/step
+Epoch 2/5
+397/397 - 68s - loss: 1.0409 - accuracy: 0.8208 - val_loss: 0.9272 - val_accuracy: 0.8514 - 68s/epoch - 171ms/step
+Epoch 3/5
+397/397 - 73s - loss: 0.9684 - accuracy: 0.8537 - val_loss: 0.9006 - val_accuracy: 0.8716 - 73s/epoch - 183ms/step
+Epoch 4/5
+397/397 - 72s - loss: 0.9290 - accuracy: 0.8692 - val_loss: 0.8532 - val_accuracy: 0.8897 - 72s/epoch - 181ms/step
+Epoch 5/5
+397/397 - 50s - loss: 0.8986 - accuracy: 0.8833 - val_loss: 0.8345 - val_accuracy: 0.8981 - 50s/epoch - 126ms/step
+Epoch 1/10
+397/397 - 66s - loss: 0.8116 - accuracy: 0.9202 - val_loss: 0.7491 - val_accuracy: 0.9283 - 66s/epoch - 167ms/step
+Epoch 2/10
+397/397 - 67s - loss: 0.7297 - accuracy: 0.9493 - val_loss: 0.7070 - val_accuracy: 0.9437 - 67s/epoch - 168ms/step
+Epoch 3/10
+397/397 - 92s - loss: 0.6870 - accuracy: 0.9624 - val_loss: 0.6702 - val_accuracy: 0.9610 - 92s/epoch - 231ms/step
+Epoch 4/10
+397/397 - 64s - loss: 0.6579 - accuracy: 0.9687 - val_loss: 0.6552 - val_accuracy: 0.9606 - 64s/epoch - 162ms/step
+Epoch 5/10
+397/397 - 59s - loss: 0.6317 - accuracy: 0.9771 - val_loss: 0.6362 - val_accuracy: 0.9669 - 59s/epoch - 148ms/step
+Epoch 6/10
+397/397 - 59s - loss: 0.6139 - accuracy: 0.9791 - val_loss: 0.6309 - val_accuracy: 0.9662 - 59s/epoch - 148ms/step
+Epoch 7/10
+397/397 - 66s - loss: 0.6004 - accuracy: 0.9829 - val_loss: 0.6180 - val_accuracy: 0.9687 - 66s/epoch - 166ms/step
+Epoch 8/10
+397/397 - 77s - loss: 0.5873 - accuracy: 0.9860 - val_loss: 0.5947 - val_accuracy: 0.9746 - 77s/epoch - 195ms/step
+Epoch 9/10
+397/397 - 86s - loss: 0.5790 - accuracy: 0.9861 - val_loss: 0.6000 - val_accuracy: 0.9746 - 86s/epoch - 218ms/step
+Epoch 10/10
+397/397 - 74s - loss: 0.5693 - accuracy: 0.9895 - val_loss: 0.5906 - val_accuracy: 0.9735 - 74s/epoch - 186ms/step
+Saved /home/abhishek-singh-dasila/Documents/plant_disease_edge/models/mobilenetv3small_standard  (17.5 min)
+
+===== 19:38 2/6 strong augmentation
+2026-11-17 19:38:47.207095: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-11-17 19:38:47.219123: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-11-17 19:38:47.222619: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+mobilenetv3small: 944,890 parameters, 12707 training images
+Epoch 1/5
+397/397 - 67s - loss: 1.7359 - accuracy: 0.5039 - val_loss: 1.1157 - val_accuracy: 0.7698 - 67s/epoch - 169ms/step
+Epoch 2/5
+397/397 - 63s - loss: 1.3917 - accuracy: 0.6531 - val_loss: 0.9935 - val_accuracy: 0.8202 - 63s/epoch - 158ms/step
+Epoch 3/5
+397/397 - 61s - loss: 1.3154 - accuracy: 0.6957 - val_loss: 0.9807 - val_accuracy: 0.8271 - 61s/epoch - 153ms/step
+Epoch 4/5
+397/397 - 64s - loss: 1.2733 - accuracy: 0.7097 - val_loss: 0.9436 - val_accuracy: 0.8492 - 64s/epoch - 161ms/step
+Epoch 5/5
+397/397 - 60s - loss: 1.2317 - accuracy: 0.7264 - val_loss: 0.9154 - val_accuracy: 0.8551 - 60s/epoch - 152ms/step
+Epoch 1/10
+397/397 - 84s - loss: 1.0715 - accuracy: 0.7983 - val_loss: 0.8101 - val_accuracy: 0.9036 - 84s/epoch - 211ms/step
+Epoch 2/10
+397/397 - 81s - loss: 0.9531 - accuracy: 0.8506 - val_loss: 0.7803 - val_accuracy: 0.9139 - 81s/epoch - 205ms/step
+Epoch 3/10
+397/397 - 77s - loss: 0.8920 - accuracy: 0.8792 - val_loss: 0.7352 - val_accuracy: 0.9334 - 77s/epoch - 194ms/step
+Epoch 4/10
+397/397 - 81s - loss: 0.8535 - accuracy: 0.8907 - val_loss: 0.7209 - val_accuracy: 0.9397 - 81s/epoch - 203ms/step
+Epoch 5/10
+397/397 - 78s - loss: 0.8212 - accuracy: 0.9029 - val_loss: 0.6806 - val_accuracy: 0.9584 - 78s/epoch - 197ms/step
+Epoch 6/10
+397/397 - 79s - loss: 0.7939 - accuracy: 0.9108 - val_loss: 0.6711 - val_accuracy: 0.9595 - 79s/epoch - 198ms/step
+Epoch 7/10
+397/397 - 76s - loss: 0.7646 - accuracy: 0.9225 - val_loss: 0.6811 - val_accuracy: 0.9478 - 76s/epoch - 192ms/step
+Epoch 8/10
+397/397 - 75s - loss: 0.7565 - accuracy: 0.9256 - val_loss: 0.6503 - val_accuracy: 0.9606 - 75s/epoch - 190ms/step
+Epoch 9/10

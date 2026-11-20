@@ -1,0 +1,14 @@
+# Laptop / Colab / Kaggle: data prep, training, evaluation, quantization, tests
+tensorflow>=2.16,<2.19
+tf_keras>=2.16,<2.19        # must match the tensorflow minor version
+tensorflow_hub>=0.16
+setuptools                 # tensorflow_hub imports pkg_resources
+numpy
+pillow
+scikit-learn
+matplotlib
+pyyaml
+flask
+paho-mqtt>=2.0
+kaggle
+pytest

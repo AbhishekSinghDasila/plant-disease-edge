@@ -1,0 +1,10 @@
+# Raspberry Pi: inference + app only, no TensorFlow. pi/setup_pi.sh installs these.
+# TFLite runtime: ai-edge-litert (Bookworm, Python >= 3.10), or
+#                 tflite-runtime 2.13 (Bullseye, Python 3.9) - tested with models made by TF 2.17
+ai-edge-litert ; python_version >= "3.10"
+tflite-runtime ; python_version < "3.10"
+numpy<2
+pillow
+pyyaml
+flask
+paho-mqtt>=2.0

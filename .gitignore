@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+data/
+
+captures/
+results/*.png
+iot/diagnoses.csv
+*.weights.h5
+.pytest_cache/
+# keep the small deployable models (edge INT8 + cloud FP32 + labels); big ones stay out
+!models/
+models/*
+!models/pv38_int8.tflite
+!models/pv38_fp32.tflite
+!models/pv38.labels.json
+*.pyc
